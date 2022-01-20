@@ -1,8 +1,6 @@
-
 # Fast and Accurate Image Super Resolution by Deep CNN with Skip Connection and Network in Network
 
 by [Jin Yamanaka](https://github.com/jiny2001), Shigesumi Kuwashima and [Takio Kurita](http://home.hiroshima-u.ac.jp/tkurita/profile-e.html)
-
 
 ## Overview (Ver 2.)
 
@@ -14,55 +12,53 @@ The model structure is like below. We use Deep CNN with Residual Net, Skip Conne
 
 As a ver2, we also implemented these features.
 
-* __Pixel Shuffler__ from ["Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network"
-](https://arxiv.org/abs/1609.05158)
+- **Pixel Shuffler** from ["Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network"
+  ](https://arxiv.org/abs/1609.05158)
 
-* __Transposed-CNN__ (optional) from ["Fully Convolutional Networks for Semantic Segmentation"](https://arxiv.org/abs/1411.4038)
+- **Transposed-CNN** (optional) from ["Fully Convolutional Networks for Semantic Segmentation"](https://arxiv.org/abs/1411.4038)
 
-* __Self Ensemble__ from ["Seven ways to improve example-based single image super resolution"](https://arxiv.org/abs/1511.02228)
+- **Self Ensemble** from ["Seven ways to improve example-based single image super resolution"](https://arxiv.org/abs/1511.02228)
 
-* __Clipping Normalization__ (Gradient clipping)
+- **Clipping Normalization** (Gradient clipping)
 
-* Dynamically load training images (optional)
+- Dynamically load training images (optional)
 
-* Add extra layers / Update default parameters for better PSNR result
+- Add extra layers / Update default parameters for better PSNR result
 
-* __Depthwise Separable Convolutions__ from ["Xception: Deep Learning with Depthwise Separable Convolutions"](https://arxiv.org/abs/1610.02357). Added by [Chew Jing Wei](https://github.com/tehtea)
-Depthwise separable convolutions reduce the complexity of your model because it splits the computation
-of a traditional convolutional layer into two steps. The first step is to perform a depthwise convolution, meaning each input 
-channel is convolved in isolation of other channels, then the second step is to perform a pointwise convolution, where the stacked output
-of each depthwise filter is convolved by a 1x1 filter which determines the final number of output channels in that layer. For a more complete yet beginner-friendly explanation, please see https://towardsdatascience.com/a-basic-introduction-to-separable-convolutions-b99ec3102728
+- **Depthwise Separable Convolutions** from ["Xception: Deep Learning with Depthwise Separable Convolutions"](https://arxiv.org/abs/1610.02357). Added by [Chew Jing Wei](https://github.com/tehtea)
+  Depthwise separable convolutions reduce the complexity of your model because it splits the computation
+  of a traditional convolutional layer into two steps. The first step is to perform a depthwise convolution, meaning each input
+  channel is convolved in isolation of other channels, then the second step is to perform a pointwise convolution, where the stacked output
+  of each depthwise filter is convolved by a 1x1 filter which determines the final number of output channels in that layer. For a more complete yet beginner-friendly explanation, please see https://towardsdatascience.com/a-basic-introduction-to-separable-convolutions-b99ec3102728
 
 ## Sample result
 
-| Input image (orange) and x4 bicubic | Our DCSCN output |
-|:-------:|:-------:|
+|                                          Input image (orange) and x4 bicubic                                           |                                                    Our DCSCN output                                                    |
+| :--------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------: |
 | <img src="https://raw.githubusercontent.com/jiny2001/dcscn-super-resolution/master/documents/dcscn_l.png" width="380"> | <img src="https://raw.githubusercontent.com/jiny2001/dcscn-super-resolution/master/documents/dcscn_r.png" width="380"> |
 
 Our model, DCSCN was much lighter than other Deep Learning based SISR models which is [ver 1](https://github.com/jiny2001/dcscn-super-resolution/tree/ver1). As a ver2, we use larger model and recent technics to get a better image restoration performace.
-
 
 ## Requirements
 
 python >= 3.5
 tensorflow >= 2.0.0, scipy, numpy, pillow, imageio, and scikit-image
 
-
 ## Result of PSNR
 
 The sample result of default parameter is here. The model is trained by DIV2k with 150,000 48x48 images for one epoch.
 
-| Dataset | Scale | Bicubic | c-DCSCN (ver1) | DRCN | VDSR | DCSCN (ver2) | DRRN |
-|:-------:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
-| set5 | x2 | 33.66 | 37.15 | 37.63 | 37.53 | 37.79 | 37.74 |
-|  | x3 | 30.39 | 33.09 | 33.82 | 33.66 | 34.06 | 34.03 |
-|  | x4 | 28.42 | 30.85 | 31.53 | 31.35 | 31.72 | 31.68 |
-| set14 | x2 | 30.24 | 32.74 | 33.04 | 33.03 | 33.25 | 33.23 |
-|  | x3 | 27.55 | 29.47 | 29.76 | 29.77 | 29.95 | 29.96 |
-|  | x4 | 26.00 | 27.76 | 28.02 | 28.01 | 28.25 | 28.21 |
-| bsd100 | x2 | 29.56 | 31.61 | 31.85 | 31.90 | 32.00 | 32.05 |
-|  | x3 | 27.21 | 28.52 | 28.80 | 28.82 | 28.89 | 28.95 |
-|  | x4 | 25.96 | 27.06 | 27.23 | 27.29 | 27.35 | 27.38 |
+| Dataset | Scale | Bicubic | c-DCSCN (ver1) | DRCN  | VDSR  | DCSCN (ver2) | DRRN  |
+| :-----: | :---: | :-----: | :------------: | :---: | :---: | :----------: | :---: |
+|  set5   |  x2   |  33.66  |     37.15      | 37.63 | 37.53 |    37.79     | 37.74 |
+|         |  x3   |  30.39  |     33.09      | 33.82 | 33.66 |    34.06     | 34.03 |
+|         |  x4   |  28.42  |     30.85      | 31.53 | 31.35 |    31.72     | 31.68 |
+|  set14  |  x2   |  30.24  |     32.74      | 33.04 | 33.03 |    33.25     | 33.23 |
+|         |  x3   |  27.55  |     29.47      | 29.76 | 29.77 |    29.95     | 29.96 |
+|         |  x4   |  26.00  |     27.76      | 28.02 | 28.01 |    28.25     | 28.21 |
+| bsd100  |  x2   |  29.56  |     31.61      | 31.85 | 31.90 |    32.00     | 32.05 |
+|         |  x3   |  27.21  |     28.52      | 28.80 | 28.82 |    28.89     | 28.95 |
+|         |  x4   |  25.96  |     27.06      | 27.23 | 27.29 |    27.35     | 27.38 |
 
 Results and model will be uploaded in some days!!
 
@@ -117,11 +113,10 @@ python3 train.py --scale=3 --dataset=[your own data directory]
 python3 train.py --dataset=bsd200 --training_images=80000 --pixel_shuffler=false
 ```
 
-* Each training and evaluation summary will be added to **log.txt**.
-* Model will be saved under **models/"model name".ckpt**
-* Evaluation result images would be generated under **output/"model name"/data/[dataset directory name]**
-* When you use evaluate.py / sr.py, please use completely same args with training so that the script can load your own learned **"model name".ckpt**.
-
+- Each training and evaluation summary will be added to **log.txt**.
+- Model will be saved under **models/"model name".ckpt**
+- Evaluation result images would be generated under **output/"model name"/data/[dataset directory name]**
+- When you use evaluate.py / sr.py, please use completely same args with training so that the script can load your own learned **"model name".ckpt**.
 
 ### Using small model for training/test (for CPU)
 
@@ -136,11 +131,10 @@ python3 train.py --dataset=set5 --layers=4 --filters=32 --use_nin=false --traini
 ```
 
 We propose compact verison of DCSCN (c-DCSCN) in my paper. When you want to try training with this model, use these option below. (x2 scale)
+
 ```
 python3 train.py --scale=2 --layers=7 --filters=32 --min_filters=8 --filters_decay_gamma=1.2 --nin_filters=24 --nin_filters2=8 --reconstruct_layers=0 --self_ensemble=1 --dataset=yang_bsd_8 --training_images=228688 --batch_image_size=32 --build_batch=True --do_benchmark=True --pixel_shuffler_filters=1
 ```
-
-
 
 ### Speeding up training
 
@@ -159,35 +153,34 @@ In this case, batch image positions are adjusted and limited to be on the grid w
 
 ### How can I set --training_images parameter?
 
---training_images is, the number of patches trained in one epoch. So, usually, it would be better to be same as the number of input training patch images. When you use build_batch=True, the trainer will create a patch images under **"batch_data"** before training so that you can see how much batch images are in the train data. 
+--training_images is, the number of patches trained in one epoch. So, usually, it would be better to be same as the number of input training patch images. When you use build_batch=True, the trainer will create a patch images under **"batch_data"** before training so that you can see how much batch images are in the train data.
 
 However, it really depends on the image type/variance and model complexity. You can begin with very small value like 1,000 and if the result is not enough, you can increase it until 100,000 to 200,000.
 
-
 # Important parameters
 
-| Parameter arg | Name | Default | Explanation |
-|:-------:|:-------:|:----:|:----:|
-| layers | Num CNN layers | 12 | Number of layers of feature-extraction CNNs |
-| filters | Num of first CNN filters | 196 | Number of filters of the first feature-extraction CNNs |
-| min_filters | Num of last CNN filters | 48 | Number of filters of the last feature-extraction CNNs |
-| filters_decay_gamma | Decay Gamma | 1.5 | Number of CNN filters are decayed from [filters] to [min_filters] by this gamma on each layers |
-| pixel_shuffler | Pixel Shuffler | True | Use Pixel Shuffler as up-sampling layer. If it's False, use transposed CNN as up-sampling layer. |
-| self_ensemble | Self Ensemble | 8 | Apply SR for 1-8 flipped/rotate images and then use mean image as result. |
-| training_images | Batch images for training epoch | 24000 | This number of batch images are used for training one epoch. I usually use 100,000 batch images for each 10 epochs for each Learning Rate. |
-| dropout_rate | Dropout rate | 0.8 | Output nodes should be kept by this probability. Should be 1 >= drop out > 0. If 1, don't use dropout. |
-| initializer | Initialize method | he | Initialize method of each weight. Can be one of [uniform, stddev, xavier, he, identity, zero]. |
-| activator | Activator function | prelu | Type of activator functions for each CNN. Can be one of [relu, leaky_relu, prelu, sigmoid, tanh] |
-| optimizer | Optimizer function | adam | Method of optimizer. Can be one of [gd, momentum, adadelta, adagrad, adam, rmsprop] |
-| batch_image_size | Image size for each Batch | 48 | Each training image will be splitted this size. |
-| batch_num | Image num for each batch | 20 | Number of batch images for one training step. |
-| clipping_norm | value for gradient clipping | 5 | Norm for gradient clipping. If it's <= 0 we don't use gradient clipping. |
+|    Parameter arg    |              Name               | Default |                                                                Explanation                                                                 |
+| :-----------------: | :-----------------------------: | :-----: | :----------------------------------------------------------------------------------------------------------------------------------------: |
+|       layers        |         Num CNN layers          |   12    |                                                Number of layers of feature-extraction CNNs                                                 |
+|       filters       |    Num of first CNN filters     |   196   |                                           Number of filters of the first feature-extraction CNNs                                           |
+|     min_filters     |     Num of last CNN filters     |   48    |                                           Number of filters of the last feature-extraction CNNs                                            |
+| filters_decay_gamma |           Decay Gamma           |   1.5   |                       Number of CNN filters are decayed from [filters] to [min_filters] by this gamma on each layers                       |
+|   pixel_shuffler    |         Pixel Shuffler          |  True   |                      Use Pixel Shuffler as up-sampling layer. If it's False, use transposed CNN as up-sampling layer.                      |
+|    self_ensemble    |          Self Ensemble          |    8    |                                 Apply SR for 1-8 flipped/rotate images and then use mean image as result.                                  |
+|   training_images   | Batch images for training epoch |  24000  | This number of batch images are used for training one epoch. I usually use 100,000 batch images for each 10 epochs for each Learning Rate. |
+|    dropout_rate     |          Dropout rate           |   0.8   |                   Output nodes should be kept by this probability. Should be 1 >= drop out > 0. If 1, don't use dropout.                   |
+|     initializer     |        Initialize method        |   he    |                       Initialize method of each weight. Can be one of [uniform, stddev, xavier, he, identity, zero].                       |
+|      activator      |       Activator function        |  prelu  |                      Type of activator functions for each CNN. Can be one of [relu, leaky_relu, prelu, sigmoid, tanh]                      |
+|      optimizer      |       Optimizer function        |  adam   |                            Method of optimizer. Can be one of [gd, momentum, adadelta, adagrad, adam, rmsprop]                             |
+|  batch_image_size   |    Image size for each Batch    |   48    |                                              Each training image will be splitted this size.                                               |
+|      batch_num      |    Image num for each batch     |   20    |                                               Number of batch images for one training step.                                                |
+|    clipping_norm    |   value for gradient clipping   |    5    |                                  Norm for gradient clipping. If it's <= 0 we don't use gradient clipping.                                  |
 
 Also learning late and other model parameters are still important.
 
-We'll train [ __training_images__ / __batch_num__ ] steps for each epoch. Learning rate will be started from __initial_lr__. After [lr_decay_epoch] epochs has done, learning rate will be decayed by __lr_decay__. And when the current learning rate gets lower than __end_lr__, then training will be finished.
+We'll train [ __training_images__ / __batch_num__ ] steps for each epoch. Learning rate will be started from **initial_lr**. After [lr_decay_epoch] epochs has done, learning rate will be decayed by **lr_decay**. And when the current learning rate gets lower than **end_lr**, then training will be finished.
 
-Usually you can control how much iterate the training batch by adjusting __training_images__ and __lr_decay_epoch__. Please check arg.py for other params.
+Usually you can control how much iterate the training batch by adjusting **training_images** and **lr_decay_epoch**. Please check arg.py for other params.
 
 ## Data augmentation
 
@@ -211,7 +204,7 @@ python3 train.py --dataset=yang91_4
 RGB image is converted to YCbCr image. And then trained and applied only for Y channel.
 
 For PSNR, by the default, result and original image are shaved by 'scale' pixels from each border, rounded to integer and then PSNR and SSIM are calculated.
-I use SSIM index calculation procedure from scikit-image. Parameters are here. (win_size=11, gaussian_weights=True, multichannel=True, K1=0.01, K2=0.03, sigma=1.5, data_range=255)
+I use SSIM index calculation procedure from scikit-image. Parameters are here. (win_size=11, gaussian_weights=True, multichannel=True, K1=0.01, K2=0.03, sigma=1.5, data_range=1377)
 (9/16/2018 modified)
 
 ## Visualization

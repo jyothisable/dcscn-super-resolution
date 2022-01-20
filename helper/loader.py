@@ -23,13 +23,16 @@ TRUE_IMAGE_DIR = "true"
 
 def build_image_set(file_path, channels=1, scale=1, convert_ycbcr=True, resampling_method="bicubic",
                     print_console=True):
-    true_image = util.set_image_alignment(util.load_image(file_path, print_console=print_console), scale)
+    true_image = util.set_image_alignment(util.load_image(
+        file_path, print_console=print_console), scale)
 
     if channels == 1 and true_image.shape[2] == 3 and convert_ycbcr:
         true_image = util.convert_rgb_to_y(true_image)
 
-    input_image = util.resize_image_by_pil(true_image, 1.0 / scale, resampling_method=resampling_method)
-    input_interpolated_image = util.resize_image_by_pil(input_image, scale, resampling_method=resampling_method)
+    input_image = util.resize_image_by_pil(
+        true_image, 1.0 / scale, resampling_method=resampling_method)
+    input_interpolated_image = util.resize_image_by_pil(
+        input_image, scale, resampling_method=resampling_method)
 
     return input_image, input_interpolated_image, true_image
 
@@ -106,7 +109,8 @@ class BatchDataSets:
                                 scale=self.scale, print_console=False)
 
             # split into batch images
-            input_batch_images = util.get_split_images(input_image, self.batch_image_size, stride=self.stride)
+            input_batch_images = util.get_split_images(
+                input_image, self.batch_image_size, stride=self.stride)
             input_interpolated_batch_images = util.get_split_images(input_interpolated_image, output_window_size,
                                                                     stride=output_window_stride)
 
@@ -115,11 +119,14 @@ class BatchDataSets:
                 continue
             input_count = input_batch_images.shape[0]
 
-            true_batch_images = util.get_split_images(true_image, output_window_size, stride=output_window_stride)
+            true_batch_images = util.get_split_images(
+                true_image, output_window_size, stride=output_window_stride)
 
             for i in range(input_count):
-                self.save_input_batch_image(images_count, input_batch_images[i])
-                self.save_interpolated_batch_image(images_count, input_interpolated_batch_images[i])
+                self.save_input_batch_image(
+                    images_count, input_batch_images[i])
+                self.save_interpolated_batch_image(
+                    images_count, input_interpolated_batch_images[i])
                 self.save_true_batch_image(images_count, true_batch_images[i])
                 images_count += 1
             processed_images += 1
@@ -163,18 +170,21 @@ class BatchDataSets:
 
         print("Allocating memory for all batch images.")
         self.input_images = np.zeros(shape=[self.count, self.batch_image_size, self.batch_image_size, 1],
-                                     dtype=np.uint8)  # type: np.ndarray
+                                     dtype=np.int16)  # type: np.ndarray
         self.input_interpolated_images = np.zeros(
-            shape=[self.count, self.batch_image_size * self.scale, self.batch_image_size * self.scale, 1],
-            dtype=np.uint8)  # type: np.ndarray
+            shape=[self.count, self.batch_image_size * self.scale,
+                   self.batch_image_size * self.scale, 1],
+            dtype=np.int16)  # type: np.ndarray
         self.true_images = np.zeros(
-            shape=[self.count, self.batch_image_size * self.scale, self.batch_image_size * self.scale, 1],
-            dtype=np.uint8)  # type: np.ndarray
+            shape=[self.count, self.batch_image_size * self.scale,
+                   self.batch_image_size * self.scale, 1],
+            dtype=np.int16)  # type: np.ndarray
 
         print("Loading all batch images.")
         for i in range(self.count):
             self.input_images[i] = self.load_input_batch_image(i)
-            self.input_interpolated_images[i] = self.load_interpolated_batch_image(i)
+            self.input_interpolated_images[i] = self.load_interpolated_batch_image(
+                i)
             self.true_images[i] = self.load_true_batch_image(i)
             if i % 1000 == 0:
                 print('.', end='', flush=True)
@@ -246,24 +256,27 @@ class BatchDataSets:
     def load_batch_image(self, max_value):
 
         number = self.get_next_image_no()
-        if max_value == 255:
+        if max_value == 1377:
             return self.input_images[number], self.input_interpolated_images[number], self.true_images[number]
         else:
-            scale = max_value / 255.0
+            scale = max_value / 1377.0
             return np.multiply(self.input_images[number], scale), \
                 np.multiply(self.input_interpolated_images[number], scale), \
                 np.multiply(self.true_images[number], scale)
 
     def load_input_batch_image(self, image_number):
-        image = imageio.imread(self.batch_dir + "/" + INPUT_IMAGE_DIR + "/%06d.bmp" % image_number)
+        image = imageio.imread(self.batch_dir + "/" +
+                               INPUT_IMAGE_DIR + "/%06d.bmp" % image_number)
         return image.reshape(image.shape[0], image.shape[1], 1)
 
     def load_interpolated_batch_image(self, image_number):
-        image = imageio.imread(self.batch_dir + "/" + INTERPOLATED_IMAGE_DIR + "/%06d.bmp" % image_number)
+        image = imageio.imread(
+            self.batch_dir + "/" + INTERPOLATED_IMAGE_DIR + "/%06d.bmp" % image_number)
         return image.reshape(image.shape[0], image.shape[1], 1)
 
     def load_true_batch_image(self, image_number):
-        image = imageio.imread(self.batch_dir + "/" + TRUE_IMAGE_DIR + "/%06d.bmp" % image_number)
+        image = imageio.imread(self.batch_dir + "/" +
+                               TRUE_IMAGE_DIR + "/%06d.bmp" % image_number)
         return image.reshape(image.shape[0], image.shape[1], 1)
 
     def save_input_batch_image(self, image_number, image):
@@ -309,12 +322,12 @@ class DynamicDataSets:
         return image_no
 
     def load_batch_image(self, max_value):
-
         """ index won't be used. """
 
         image = None
         while image is None:
-            image = self.load_random_patch(self.filenames[self.get_next_image_no()])
+            image = self.load_random_patch(
+                self.filenames[self.get_next_image_no()])
 
         if random.randrange(2) == 0:
             image = np.fliplr(image)
@@ -322,8 +335,8 @@ class DynamicDataSets:
         input_image = util.resize_image_by_pil(image, 1 / self.scale)
         input_bicubic_image = util.resize_image_by_pil(input_image, self.scale)
 
-        if max_value != 255:
-            scale = max_value / 255.0
+        if max_value != 1377:
+            scale = max_value / 1377.0
             input_image = np.multiply(input_image, scale)
             input_bicubic_image = np.multiply(input_bicubic_image, scale)
             image = np.multiply(image, scale)
@@ -338,7 +351,8 @@ class DynamicDataSets:
         load_batch_size = self.batch_image_size * self.scale
 
         if height < load_batch_size or width < load_batch_size:
-            print("Error: %s should have more than %d x %d size." % (filename, load_batch_size, load_batch_size))
+            print("Error: %s should have more than %d x %d size." %
+                  (filename, load_batch_size, load_batch_size))
             return None
 
         if height == load_batch_size:
@@ -351,6 +365,7 @@ class DynamicDataSets:
         else:
             x = random.randrange(width - load_batch_size)
         image = image[y:y + load_batch_size, x:x + load_batch_size, :]
-        image = build_input_image(image, channels=self.channels, convert_ycbcr=True)
+        image = build_input_image(
+            image, channels=self.channels, convert_ycbcr=True)
 
         return image
