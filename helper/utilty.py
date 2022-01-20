@@ -40,7 +40,8 @@ class Timer:
         for i in range(self.timer_count):
             if self.counts[i] > 0:
                 total = 0
-                print("Average of %d: %s[ms]" % (i, "{:,}".format(self.times[i] * 1000 / self.counts[i])))
+                print("Average of %d: %s[ms]" % (i, "{:,}".format(
+                    self.times[i] * 1000 / self.counts[i])))
                 total += self.times[i]
                 print("Total of %d: %s" % (i, "{:,}".format(total)))
 
@@ -66,7 +67,8 @@ def delete_dir(directory):
 def get_files_in_directory(path):
     if not path.endswith('/'):
         path = path + "/"
-    file_list = [path + f for f in listdir(path) if (isfile(join(path, f)) and not f.startswith('.'))]
+    file_list = [
+        path + f for f in listdir(path) if (isfile(join(path, f)) and not f.startswith('.'))]
     return file_list
 
 
@@ -118,9 +120,11 @@ def save_image(filename, image, print_console=True):
     if directory != "" and not os.path.exists(directory):
         os.makedirs(directory)
     if len(image.shape) >= 3 and image.shape[2] == 3:
-        image = Image.fromarray(image, mode="RGB")  # to avoid range rescaling (cmin=0, cmax=255)
+        # to avoid range rescaling (cmin=0, cmax=255)
+        image = Image.fromarray(image, mode="RGB")
     else:
-        image = Image.fromarray(image)  # to avoid range rescaling (cmin=0, cmax=255)
+        # to avoid range rescaling (cmin=0, cmax=255)
+        image = Image.fromarray(image)
     if not isinstance(image, np.ndarray):
         image = np.array(image)
     imageio.imwrite(filename, image)
@@ -165,7 +169,8 @@ def convert_rgb_to_ycbcr(image):
 
 
 def convert_ycbcr_to_rgb(ycbcr_image):
-    rgb_image = np.zeros([ycbcr_image.shape[0], ycbcr_image.shape[1], 3])  # type: np.ndarray
+    # type: np.ndarray
+    rgb_image = np.zeros([ycbcr_image.shape[0], ycbcr_image.shape[1], 3])
 
     rgb_image[:, :, 0] = ycbcr_image[:, :, 0] - 16.0
     rgb_image[:, :, [1, 2]] = ycbcr_image[:, :, [1, 2]] - 128.0
@@ -257,7 +262,8 @@ def load_image(filename, width=0, height=0, channels=0, alignment=0, print_conso
             image = image[:, :, 0:3]
 
         if print_console:
-            print("Loaded [%s]: %d x %d x %d" % (filename, image.shape[1], image.shape[0], image.shape[2]))
+            print("Loaded [%s]: %d x %d x %d" % (
+                filename, image.shape[1], image.shape[0], image.shape[2]))
     except IndexError:
         print("IndexError: file:[%s] shape[%s]" % (filename, image.shape))
         return None
@@ -278,7 +284,8 @@ def load_image_data(filename, width=0, height=0, channels=0, alignment=0, print_
         raise LoadError("Attributes mismatch")
 
     if print_console:
-        print("Loaded [%s]: %d x %d x %d" % (filename, image.shape[1], image.shape[0], image.shape[2]))
+        print("Loaded [%s]: %d x %d x %d" %
+              (filename, image.shape[1], image.shape[0], image.shape[2]))
     return image
 
 
@@ -302,25 +309,30 @@ def get_split_images(image, window_size, stride=None, enable_duplicate=False):
 
     shape = (new_height, new_width, window_size, window_size)
     strides = size * np.array([width * stride, stride, width, 1])
-    windows = np.lib.stride_tricks.as_strided(image, shape=shape, strides=strides)
-    windows = windows.reshape(windows.shape[0] * windows.shape[1], windows.shape[2], windows.shape[3], 1)
+    windows = np.lib.stride_tricks.as_strided(
+        image, shape=shape, strides=strides)
+    windows = windows.reshape(
+        windows.shape[0] * windows.shape[1], windows.shape[2], windows.shape[3], 1)
 
     if enable_duplicate:
         extra_windows = []
         if (height - window_size) % stride != 0:
             for x in range(0, width - window_size, stride):
-                extra_windows.append(image[height - window_size - 1:height - 1, x:x + window_size:])
+                extra_windows.append(
+                    image[height - window_size - 1:height - 1, x:x + window_size:])
 
         if (width - window_size) % stride != 0:
             for y in range(0, height - window_size, stride):
-                extra_windows.append(image[y: y + window_size, width - window_size - 1:width - 1])
+                extra_windows.append(
+                    image[y: y + window_size, width - window_size - 1:width - 1])
 
         if len(extra_windows) > 0:
             org_size = windows.shape[0]
             windows = np.resize(windows,
                                 [org_size + len(extra_windows), windows.shape[1], windows.shape[2], windows.shape[3]])
             for i in range(len(extra_windows)):
-                extra_windows[i] = extra_windows[i].reshape([extra_windows[i].shape[0], extra_windows[i].shape[1], 1])
+                extra_windows[i] = extra_windows[i].reshape(
+                    [extra_windows[i].shape[0], extra_windows[i].shape[1], 1])
                 windows[org_size + i] = extra_windows[i]
 
     return windows
@@ -380,7 +392,8 @@ def get_upscale_filter_size(scale):
 def upscale_weight(scale, channels, name="weight"):
     cnn_size = get_upscale_filter_size(scale)
 
-    initial = np.zeros(shape=[cnn_size, cnn_size, channels, channels], dtype=np.float32)
+    initial = np.zeros(
+        shape=[cnn_size, cnn_size, channels, channels], dtype=np.float32)
     filter_matrix = upsample_filter(cnn_size)
 
     for i in range(channels):
@@ -395,7 +408,8 @@ def weight(shape, stddev=0.01, name="weight", uniform=False, initializer="stddev
     elif initializer == "he":
         initial = he_initializer(shape)
     elif initializer == "uniform":
-        initial = tf.random_uniform(shape, minval=-2.0 * stddev, maxval=2.0 * stddev)
+        initial = tf.random_uniform(
+            shape, minval=-2.0 * stddev, maxval=2.0 * stddev)
     elif initializer == "stddev":
         initial = tf.truncated_normal(shape=shape, stddev=stddev)
     elif initializer == "identity":
@@ -435,15 +449,18 @@ def add_summaries(scope_name, model_name, var, header_name="", save_stddev=True,
             tf.summary.scalar(header_name + "stddev/" + model_name, stddev_var)
 
         if save_max:
-            tf.summary.scalar(header_name + "max/" + model_name, tf.reduce_max(var))
+            tf.summary.scalar(header_name + "max/" +
+                              model_name, tf.reduce_max(var))
 
         if save_min:
-            tf.summary.scalar(header_name + "min/" + model_name, tf.reduce_min(var))
+            tf.summary.scalar(header_name + "min/" +
+                              model_name, tf.reduce_min(var))
         tf.summary.histogram(header_name + model_name, var)
 
 
 def log_scalar_value(writer, name, value, step):
-    summary = tf.Summary(value=[tf.Summary.Value(tag=name, simple_value=value)])
+    summary = tf.Summary(
+        value=[tf.Summary.Value(tag=name, simple_value=value)])
     writer.add_summary(summary, step)
 
 
@@ -453,7 +470,8 @@ def log_fcn_output_as_images(image, width, height, filters, model_name, max_outp
     so transform to [ N H W C ] and visualize only first channel
     """
     reshaped_image = tf.reshape(image, [-1, height, width, filters])
-    tf.summary.image(model_name, reshaped_image[:, :, :, :1], max_outputs=max_outputs)
+    tf.summary.image(
+        model_name, reshaped_image[:, :, :, :1], max_outputs=max_outputs)
 
 
 def log_cnn_weights_as_images(model_name, weights, max_outputs=20):
@@ -462,9 +480,11 @@ def log_cnn_weights_as_images(model_name, weights, max_outputs=20):
     so transform to [ In_Ch * Out_Ch, W, H ] and visualize it
     """
     shapes = get_shapes(weights)
-    weights = tf.reshape(weights, [shapes[0], shapes[1], shapes[2] * shapes[3]])
+    weights = tf.reshape(
+        weights, [shapes[0], shapes[1], shapes[2] * shapes[3]])
     weights_transposed = tf.transpose(weights, [2, 0, 1])
-    weights_transposed = tf.reshape(weights_transposed, [shapes[2] * shapes[3], shapes[0], shapes[1], 1])
+    weights_transposed = tf.reshape(
+        weights_transposed, [shapes[2] * shapes[3], shapes[0], shapes[1], 1])
     tf.summary.image(model_name, weights_transposed, max_outputs=max_outputs)
 
 
@@ -492,7 +512,8 @@ def get_loss_image(image1, image2, scale=1.0, border_size=0):
     loss_image = np.multiply(np.square(np.subtract(image1, image2)), scale)
     loss_image = np.minimum(loss_image, 255.0)
     if border_size > 0:
-        loss_image = loss_image[border_size:-border_size, border_size:-border_size, :]
+        loss_image = loss_image[border_size:-
+                                border_size, border_size:-border_size, :]
 
     return loss_image
 
@@ -527,7 +548,7 @@ def compute_psnr_and_ssim(image1, image2, border_size=0):
 
     psnr = peak_signal_noise_ratio(image1, image2, data_range=255)
     ssim = structural_similarity(image1, image2, win_size=11, gaussian_weights=True, multichannel=True, K1=0.01, K2=0.03,
-                        sigma=1.5, data_range=255)
+                                 sigma=1.5, data_range=255)
     return psnr, ssim
 
 
@@ -573,18 +594,22 @@ def print_num_of_total_parameters(output_detail=False, output_to_logging=False):
             variable_parameters *= dim
         total_parameters += variable_parameters
         if len(shape) == 1:
-            parameters_string += ("%s %d, " % (variable.name, variable_parameters))
+            parameters_string += ("%s %d, " %
+                                  (variable.name, variable_parameters))
         else:
-            parameters_string += ("%s %s=%d, " % (variable.name, str(shape), variable_parameters))
+            parameters_string += ("%s %s=%d, " %
+                                  (variable.name, str(shape), variable_parameters))
 
     if output_to_logging:
         if output_detail:
             logging.info(parameters_string)
-        logging.info("Total %d variables, %s params" % (len(tf.trainable_variables()), "{:,}".format(total_parameters)))
+        logging.info("Total %d variables, %s params" % (
+            len(tf.trainable_variables()), "{:,}".format(total_parameters)))
     else:
         if output_detail:
             print(parameters_string)
-        print("Total %d variables, %s params" % (len(tf.trainable_variables()), "{:,}".format(total_parameters)))
+        print("Total %d variables, %s params" %
+              (len(tf.trainable_variables()), "{:,}".format(total_parameters)))
 
 
 def flip(image, flip_type, invert=False):
