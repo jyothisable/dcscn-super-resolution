@@ -1,6 +1,7 @@
-# Fast and Accurate Image Super Resolution by Deep CNN with Skip Connection and Network in Network
-
+# Forked version of Fast and Accurate Image Super Resolution by Deep CNN with Skip Connection and Network in Network
 by [Jin Yamanaka](https://github.com/jiny2001), Shigesumi Kuwashima and [Takio Kurita](http://home.hiroshima-u.ac.jp/tkurita/profile-e.html)
+
+Aims to increase resolution of solar insolation data from satellite 
 
 ## Overview (Ver 2.)
 
