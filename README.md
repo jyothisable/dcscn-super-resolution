@@ -204,7 +204,7 @@ python3 train.py --dataset=yang91_4
 RGB image is converted to YCbCr image. And then trained and applied only for Y channel.
 
 For PSNR, by the default, result and original image are shaved by 'scale' pixels from each border, rounded to integer and then PSNR and SSIM are calculated.
-I use SSIM index calculation procedure from scikit-image. Parameters are here. (win_size=11, gaussian_weights=True, multichannel=True, K1=0.01, K2=0.03, sigma=1.5, data_range=1377)
+I use SSIM index calculation procedure from scikit-image. Parameters are here. (win_size=11, gaussian_weights=True, multichannel=True, K1=0.01, K2=0.03, sigma=1.5, data_range=1366)
 (9/16/2018 modified)
 
 ## Visualization

@@ -125,7 +125,7 @@ class SuperResolution(tf_graph.TensorflowGraph):
                     name += "_B%d" % self.nin_filters2
             if self.pixel_shuffler:
                 name += "_PS"
-            if self.max_value != 1377.0:
+            if self.max_value != 1366.0:
                 name += "_M%2.1f" % self.max_value
             if self.activator != "prelu":
                 name += "_%s" % self.activator
@@ -472,13 +472,13 @@ class SuperResolution(tf_graph.TensorflowGraph):
         bicubic_image = util.resize_image_by_pil(
             input_image, self.scale, resampling_method=self.resampling_method)
 
-        if self.max_value != 1377.0:
+        if self.max_value != 1366.0:
             input_image = np.multiply(
-                input_image, self.max_value / 1377.0)  # type: np.ndarray
+                input_image, self.max_value / 1366.0)  # type: np.ndarray
             bicubic_image = np.multiply(
-                bicubic_image, self.max_value / 1377.0)  # type: np.ndarray
+                bicubic_image, self.max_value / 1366.0)  # type: np.ndarray
             org_image = np.multiply(
-                org_image, self.max_value / 1377.0)  # type: np.ndarray
+                org_image, self.max_value / 1366.0)  # type: np.ndarray
 
         feed_dict = {self.x: input_image.reshape([1, input_image.shape[0], input_image.shape[1], input_image.shape[2]]),
                      self.x2: bicubic_image.reshape(
@@ -600,11 +600,11 @@ class SuperResolution(tf_graph.TensorflowGraph):
         if bicubic_input_image is None:
             bicubic_input_image = util.resize_image_by_pil(input_image, self.scale,
                                                            resampling_method=self.resampling_method)
-        if self.max_value != 1377.0:
+        if self.max_value != 1366.0:
             input_image = np.multiply(
-                input_image, self.max_value / 1377.0)  # type: np.ndarray
+                input_image, self.max_value / 1366.0)  # type: np.ndarray
             bicubic_input_image = np.multiply(
-                bicubic_input_image, self.max_value / 1377.0)  # type: np.ndarray
+                bicubic_input_image, self.max_value / 1366.0)  # type: np.ndarray
 
         if self.self_ensemble > 1:
             output = np.zeros([self.scale * h, self.scale * w, 1])
@@ -629,8 +629,8 @@ class SuperResolution(tf_graph.TensorflowGraph):
                                                   self.dropout: 1.0, self.is_training: 0})
             output = y[0]
 
-        if self.max_value != 1377.0:
-            hr_image = np.multiply(output, 1377.0 / self.max_value)
+        if self.max_value != 1366.0:
+            hr_image = np.multiply(output, 1366.0 / self.max_value)
         else:
             hr_image = output
 

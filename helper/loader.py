@@ -256,10 +256,10 @@ class BatchDataSets:
     def load_batch_image(self, max_value):
 
         number = self.get_next_image_no()
-        if max_value == 1377:
+        if max_value == 1366:
             return self.input_images[number], self.input_interpolated_images[number], self.true_images[number]
         else:
-            scale = max_value / 1377.0
+            scale = max_value / 1366.0
             return np.multiply(self.input_images[number], scale), \
                 np.multiply(self.input_interpolated_images[number], scale), \
                 np.multiply(self.true_images[number], scale)
@@ -335,8 +335,8 @@ class DynamicDataSets:
         input_image = util.resize_image_by_pil(image, 1 / self.scale)
         input_bicubic_image = util.resize_image_by_pil(input_image, self.scale)
 
-        if max_value != 1377:
-            scale = max_value / 1377.0
+        if max_value != 1366:
+            scale = max_value / 1366.0
             input_image = np.multiply(input_image, scale)
             input_bicubic_image = np.multiply(input_bicubic_image, scale)
             image = np.multiply(image, scale)

@@ -120,10 +120,10 @@ def save_image(filename, image, print_console=True):
     if directory != "" and not os.path.exists(directory):
         os.makedirs(directory)
     if len(image.shape) >= 3 and image.shape[2] == 3:
-        # to avoid range rescaling (cmin=0, cmax=1377)
+        # to avoid range rescaling (cmin=0, cmax=1366)
         image = Image.fromarray(image, mode="RGB")
     else:
-        # to avoid range rescaling (cmin=0, cmax=1377)
+        # to avoid range rescaling (cmin=0, cmax=1366)
         image = Image.fromarray(image)
     if not isinstance(image, np.ndarray):
         image = np.array(image)
@@ -510,7 +510,7 @@ def get_loss_image(image1, image2, scale=1.0, border_size=0):
     image2 = trim_image_as_file(image2)
 
     loss_image = np.multiply(np.square(np.subtract(image1, image2)), scale)
-    loss_image = np.minimum(loss_image, 1377.0)
+    loss_image = np.minimum(loss_image, 1366.0)
     if border_size > 0:
         loss_image = loss_image[border_size:-
                                 border_size, border_size:-border_size, :]
@@ -520,7 +520,7 @@ def get_loss_image(image1, image2, scale=1.0, border_size=0):
 
 def trim_image_as_file(image):
     image = np.rint(image)
-    image = np.clip(image, 0, 1377)
+    image = np.clip(image, 0, 1366)
     if image.dtype != np.float32:
         image = image.astype(np.float32)
     return image
@@ -529,7 +529,7 @@ def trim_image_as_file(image):
 def compute_psnr_and_ssim(image1, image2, border_size=0):
     """
     Computes PSNR and SSIM index from 2 images.
-    We round it and clip to 0 - 1377. Then shave 'scale' pixels from each border.
+    We round it and clip to 0 - 1366. Then shave 'scale' pixels from each border.
     """
     if len(image1.shape) == 2:
         image1 = image1.reshape(image1.shape[0], image1.shape[1], 1)
@@ -546,9 +546,9 @@ def compute_psnr_and_ssim(image1, image2, border_size=0):
         image1 = image1[border_size:-border_size, border_size:-border_size, :]
         image2 = image2[border_size:-border_size, border_size:-border_size, :]
 
-    psnr = peak_signal_noise_ratio(image1, image2, data_range=1377)
+    psnr = peak_signal_noise_ratio(image1, image2, data_range=1366)
     ssim = structural_similarity(image1, image2, win_size=11, gaussian_weights=True, multichannel=True, K1=0.01, K2=0.03,
-                                 sigma=1.5, data_range=1377)
+                                 sigma=1.5, data_range=1366)
     return psnr, ssim
 
 
@@ -574,7 +574,7 @@ def print_filter_biases(tensor):
     print(values + "\n")
 
 
-def get_psnr(mse, max_value=1377.0):
+def get_psnr(mse, max_value=1366.0):
     if mse is None or mse == float('Inf') or mse == 0:
         psnr = 0
     else:
