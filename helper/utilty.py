@@ -111,7 +111,7 @@ def set_logging(filename, stream_log_level, file_log_level, tf_log_level):
     tf.logging.set_verbosity(tf_log_level)
 
 
-def save_image(filename, image, print_console=True):
+def save_image(filename, image, print_console=False):
     if len(image.shape) >= 3 and image.shape[2] == 1:
         image = image.reshape(image.shape[0], image.shape[1])
 
