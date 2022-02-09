@@ -36,7 +36,7 @@ import DCSCN
 from helper import args, utilty as util
 
 args.flags.DEFINE_boolean("save_results", True, "Save result, bicubic and loss images.")
-args.flags.DEFINE_boolean("compute_bicubic", False, "Compute bicubic performance.")
+args.flags.DEFINE_boolean("compute_bicubic", True, "Compute bicubic performance.")
 
 FLAGS = args.get()
 
